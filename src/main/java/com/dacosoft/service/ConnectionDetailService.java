@@ -1,13 +1,13 @@
 package com.dacosoft.service;
 
-import com.dacosoft.repository.ConnectionDetailRepository;
 import com.dacosoft.entity.ConnectionDetail;
+import com.dacosoft.repository.ConnectionDetailRepository;
+import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ConnectionDetailService {
@@ -25,8 +25,9 @@ public class ConnectionDetailService {
         return connectionDetails;
     }
 
-    public Optional<ConnectionDetail> getConnectionDetail(int id) {
-        return connectionDetailRepository.findById(id);
+    public ConnectionDetail getConnectionDetail(int id) throws NotFoundException {
+        return connectionDetailRepository.findById(id)
+                .orElseThrow(() ->  new NotFoundException(String.format("Connection detail with ID %d was not found!", id)));
     }
 
     public void saveConnectionDetail(ConnectionDetail connectionDetail) {

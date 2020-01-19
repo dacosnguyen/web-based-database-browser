@@ -2,11 +2,13 @@ package com.dacosoft.controller;
 
 import com.dacosoft.entity.ConnectionDetail;
 import com.dacosoft.service.ConnectionDetailService;
+import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 public class ConnectionDetailController {
@@ -21,12 +23,16 @@ public class ConnectionDetailController {
 
     @GetMapping(CONNECTION_DETAILS_PREFIX)
     public List<ConnectionDetail> getAllConnectionDetails() {
-         return service.getConnectionDetails();
+        return service.getConnectionDetails();
     }
 
     @GetMapping(CONNECTION_DETAILS_PREFIX + "/{id}")
-    public Optional<ConnectionDetail> getConnectionDetail(@PathVariable int id) {
-        return service.getConnectionDetail(id);
+    public ConnectionDetail getConnectionDetail(@PathVariable int id) {
+        try {
+            return service.getConnectionDetail(id);
+        } catch (NotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage(), e);
+        }
     }
 
     @PostMapping(CONNECTION_DETAILS_PREFIX)
