@@ -11,7 +11,7 @@ import java.util.Optional;
 @RestController
 public class ConnectionDetailController {
 
-    public static final String PREFIX = "/connectiondetails";
+    public static final String CONNECTION_DETAILS_PREFIX = "/connectiondetails";
     private final ConnectionDetailService service;
 
     @Autowired
@@ -19,28 +19,28 @@ public class ConnectionDetailController {
         this.service = service;
     }
 
-    @GetMapping(PREFIX)
+    @GetMapping(CONNECTION_DETAILS_PREFIX)
     public List<ConnectionDetail> getAllConnectionDetails() {
          return service.getConnectionDetails();
     }
 
-    @GetMapping(PREFIX + "/{id}")
-    public Optional<ConnectionDetail> getConnectionDetail(@PathVariable Integer id) {
+    @GetMapping(CONNECTION_DETAILS_PREFIX + "/{id}")
+    public Optional<ConnectionDetail> getConnectionDetail(@PathVariable int id) {
         return service.getConnectionDetail(id);
     }
 
-    @PostMapping(PREFIX)
+    @PostMapping(CONNECTION_DETAILS_PREFIX)
     public void saveConnectionDetail(@RequestBody ConnectionDetail connectionDetail) {
         service.saveConnectionDetail(connectionDetail);
     }
 
-    @PutMapping(PREFIX)
+    @PutMapping(CONNECTION_DETAILS_PREFIX)
     public void updateConnectionDetail(@RequestBody ConnectionDetail connectionDetail) {
         service.updateConnectionDetail(connectionDetail);
     }
 
-    @DeleteMapping(PREFIX + "/{id}")
-    public void deleteConnectionDetail(@PathVariable Integer id) {
+    @DeleteMapping(CONNECTION_DETAILS_PREFIX + "/{id}")
+    public void deleteConnectionDetail(@PathVariable int id) {
         service.deleteConnectionDetail(id);
     }
 

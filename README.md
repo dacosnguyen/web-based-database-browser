@@ -1,2 +1,7 @@
 # web-based-database-browser
 Web based database browser description TODO
+
+## features to consider
+- the architecture can handle more DB vendors.
+- connection passwords are encrypted.
+- cached connections.

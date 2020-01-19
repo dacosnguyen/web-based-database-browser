@@ -25,7 +25,7 @@ public class ConnectionDetailService {
         return connectionDetails;
     }
 
-    public Optional<ConnectionDetail> getConnectionDetail(Integer id) {
+    public Optional<ConnectionDetail> getConnectionDetail(int id) {
         return connectionDetailRepository.findById(id);
     }
 
@@ -37,7 +37,7 @@ public class ConnectionDetailService {
         connectionDetailRepository.save(connectionDetail);
     }
 
-    public void deleteConnectionDetail(Integer id) {
+    public void deleteConnectionDetail(int id) {
         connectionDetailRepository.deleteById(id);
     }
 
