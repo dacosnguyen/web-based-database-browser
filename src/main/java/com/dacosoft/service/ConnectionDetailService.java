@@ -28,4 +28,17 @@ public class ConnectionDetailService {
     public Optional<ConnectionDetail> getConnectionDetail(Integer id) {
         return connectionDetailRepository.findById(id);
     }
+
+    public void saveConnectionDetail(ConnectionDetail connectionDetail) {
+        connectionDetailRepository.save(connectionDetail);
+    }
+
+    public void updateConnectionDetail(ConnectionDetail connectionDetail) {
+        connectionDetailRepository.save(connectionDetail);
+    }
+
+    public void deleteConnectionDetail(Integer id) {
+        connectionDetailRepository.deleteById(id);
+    }
+
 }

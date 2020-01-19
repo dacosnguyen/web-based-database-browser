@@ -1,7 +1,7 @@
 DROP TABLE IF EXISTS connection_detail;
 
 CREATE TABLE connection_detail (
-  id            INTEGER AUTO_INCREMENT PRIMARY KEY,
+  id            INTEGER SERIAL PRIMARY KEY NOT NULL ,
   name          VARCHAR(64) NOT NULL,
   hostname      VARCHAR(64) NOT NULL,
   port          INTEGER NOT NULL,
