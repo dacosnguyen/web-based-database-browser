@@ -1,7 +1,7 @@
 package com.dacosoft.controller;
 
 import com.dacosoft.entity.ConnectionDetail;
-import com.dacosoft.service.ConnectionDetailService;
+import com.dacosoft.service.IConnectionDetailService;
 import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,10 +14,10 @@ import java.util.List;
 public class ConnectionDetailController {
 
     public static final String CONNECTION_DETAILS_PREFIX = "/connectiondetails";
-    private final ConnectionDetailService service;
+    private final IConnectionDetailService service;
 
     @Autowired
-    public ConnectionDetailController(ConnectionDetailService service) {
+    public ConnectionDetailController(IConnectionDetailService service) {
         this.service = service;
     }
 

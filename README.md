@@ -6,3 +6,5 @@ Web based database browser description TODO
 - connection passwords are encrypted.
 - cached connections.
 - JSON mapping can handle type org.postgresql.jdbc.PgArray
+- An exception handler with logging in REST controllers.
+- Integration tests with Arquillian.

@@ -13,17 +13,18 @@ import java.util.*;
 import java.util.function.Function;
 
 @Service
-public class DatabaseBrowserService {
+public class DatabaseBrowserService implements IDatabaseBrowserService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseBrowserService.class);
     private static final String SCHEMA_PATTERN = "public";
-    private final ConnectionDetailService connectionDetailService;
+    private final IConnectionDetailService service;
 
     @Autowired
-    public DatabaseBrowserService(ConnectionDetailService connectionDetailService) {
-        this.connectionDetailService = connectionDetailService;
+    public DatabaseBrowserService(IConnectionDetailService service) {
+        this.service = service;
     }
 
+    @Override
     public List<String> getAllSchemas(int connectionDetailId) throws NotFoundException, SQLException, ClassNotFoundException {
         final Function<Connection, List<String>> fn = (connection) -> {
             List<String> result = new ArrayList<>();
@@ -42,6 +43,7 @@ public class DatabaseBrowserService {
         return invoke(connectionDetailId, fn);
     }
 
+    @Override
     public List<String> getAllTables(int connectionDetailId) throws SQLException, NotFoundException, ClassNotFoundException {
         final Function<Connection, List<String>> fn = (connection) -> {
             List<String> result = new ArrayList<>();
@@ -62,6 +64,7 @@ public class DatabaseBrowserService {
         return invoke(connectionDetailId, fn);
     }
 
+    @Override
     public List<DBColumn> getAllColumns(int connectionDetailId, String tableName) throws SQLException, NotFoundException, ClassNotFoundException {
         final Function<Connection, List<DBColumn>> fn = (connection) -> {
             List<DBColumn> result = new ArrayList<>();
@@ -81,6 +84,7 @@ public class DatabaseBrowserService {
         return invoke(connectionDetailId, fn);
     }
 
+    @Override
     public DBColumn newColumn(ResultSet rs) throws SQLException {
         return new DBColumn(
                 // Get column name
@@ -92,6 +96,7 @@ public class DatabaseBrowserService {
         );
     }
 
+    @Override
     public List<Map<String, Object>> getTableRows(int connectionDetailId, String tableName, int maxRows) throws SQLException, NotFoundException, ClassNotFoundException {
         final Function<Connection, List<Map<String, Object>>> fn = (connection) -> {
             final List<Map<String, Object>> rowsResult = new ArrayList<>();
@@ -126,9 +131,9 @@ public class DatabaseBrowserService {
      * Connects to a database and invokes defined function on the connection.
      * R stands for a result type.
      */
-    public <R> R invoke(int connectionDetailId, Function<Connection, R> fn) throws NotFoundException, ClassNotFoundException, SQLException {
+    private <R> R invoke(int connectionDetailId, Function<Connection, R> fn) throws NotFoundException, ClassNotFoundException, SQLException {
         // fetch connection detail from ID
-        final ConnectionDetail connectionDetail = connectionDetailService.getConnectionDetail(connectionDetailId);
+        final ConnectionDetail connectionDetail = service.getConnectionDetail(connectionDetailId);
 
         R result;
         Class.forName("org.postgresql.Driver");
@@ -145,7 +150,7 @@ public class DatabaseBrowserService {
         // Creating connection
         Connection connection = DriverManager.getConnection(urlBuilder.toString(),
                 "postgres", "");
-        LOGGER.info(String.format("Connected to the database: %s (%s)", connectionDetail.getName(), connectionDetail.getDescription()));
+        DatabaseBrowserService.LOGGER.info(String.format("Connected to the database: %s (%s)", connectionDetail.getName(), connectionDetail.getDescription()));
 
         result = fn.apply(connection);
 

@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class ConnectionDetailService {
+public class ConnectionDetailService implements IConnectionDetailService {
 
     private final ConnectionDetailRepository connectionDetailRepository;
 
@@ -19,25 +19,30 @@ public class ConnectionDetailService {
         this.connectionDetailRepository = connectionDetailRepository;
     }
 
+    @Override
     public List<ConnectionDetail> getConnectionDetails() {
         List<ConnectionDetail> connectionDetails = new ArrayList<>();
         connectionDetailRepository.findAll().forEach(connectionDetails::add);
         return connectionDetails;
     }
 
+    @Override
     public ConnectionDetail getConnectionDetail(int id) throws NotFoundException {
         return connectionDetailRepository.findById(id)
                 .orElseThrow(() ->  new NotFoundException(String.format("Connection detail with ID %d was not found!", id)));
     }
 
+    @Override
     public void saveConnectionDetail(ConnectionDetail connectionDetail) {
         connectionDetailRepository.save(connectionDetail);
     }
 
+    @Override
     public void updateConnectionDetail(ConnectionDetail connectionDetail) {
         connectionDetailRepository.save(connectionDetail);
     }
 
+    @Override
     public void deleteConnectionDetail(int id) {
         connectionDetailRepository.deleteById(id);
     }
