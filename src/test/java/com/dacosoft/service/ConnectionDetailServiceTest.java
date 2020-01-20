@@ -12,6 +12,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * An integration test which includes a database.
+ */
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class ConnectionDetailServiceTest {
@@ -30,7 +33,7 @@ public class ConnectionDetailServiceTest {
     }
 
     @Test
-    public void testGetConnectionDetailIdealUC() throws NotFoundException {
+    public void testGetConnectionDetail() throws NotFoundException {
         final ConnectionDetail cd = connectionDetailService.getConnectionDetail(1);
         Assert.assertEquals(1, cd.getId().intValue());
     }
@@ -53,6 +56,8 @@ public class ConnectionDetailServiceTest {
 
         final ConnectionDetail newCd = connectionDetailService.getConnectionDetail(cd.getId());
         Assert.assertEquals(3, newCd.getId().intValue());
+
+        connectionDetailService.deleteConnectionDetail(newCd.getId());
     }
 
     @Test

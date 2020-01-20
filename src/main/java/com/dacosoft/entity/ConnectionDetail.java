@@ -1,11 +1,12 @@
 package com.dacosoft.entity;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Objects;
 
 @Entity
 @Table(schema = "public", name = "connection_detail")
-public final class ConnectionDetail {
+public final class ConnectionDetail implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

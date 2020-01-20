@@ -1,0 +1,10 @@
+{
+  "id": 1,
+  "name": "name1",
+  "hostname": "hostname1",
+  "port": 1111,
+  "databaseName": "databasename1",
+  "username": "user1",
+  "password": "pass1",
+  "description": null
+}
