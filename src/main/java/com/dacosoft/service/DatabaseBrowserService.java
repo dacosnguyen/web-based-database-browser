@@ -2,14 +2,16 @@ package com.dacosoft.service;
 
 import com.dacosoft.entity.ConnectionDetail;
 import com.dacosoft.entity.DBColumn;
-import javassist.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 
 @Service
@@ -17,6 +19,17 @@ public class DatabaseBrowserService implements IDatabaseBrowserService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseBrowserService.class);
     private static final String SCHEMA_PATTERN = "public";
+    private String driverClassName = "org.postgresql.Driver";
+    private CheckedBiFunction<IConnectionDetailService, Integer, ConnectionDetail> getConnectionDetailFn = IConnectionDetailService::getConnectionDetail;
+    private Function<ConnectionDetail, String> urlConverter = connectionDetail1 -> new StringBuilder()
+            .append("jdbc:postgresql://")
+            .append(connectionDetail1.getHostname())
+            .append(":")
+            .append(connectionDetail1.getPort())
+            .append("/")
+            .append(connectionDetail1.getDatabaseName())
+            .toString();
+
     private final IConnectionDetailService service;
 
     @Autowired
@@ -25,7 +38,7 @@ public class DatabaseBrowserService implements IDatabaseBrowserService {
     }
 
     @Override
-    public List<String> getAllSchemas(int connectionDetailId) throws NotFoundException, SQLException, ClassNotFoundException {
+    public List<String> getAllSchemas(int connectionDetailId) throws Exception {
         final Function<Connection, List<String>> fn = (connection) -> {
             List<String> result = new ArrayList<>();
             try {
@@ -40,11 +53,11 @@ public class DatabaseBrowserService implements IDatabaseBrowserService {
             return result;
         };
 
-        return invoke(connectionDetailId, fn);
+        return invoke(fn, driverClassName, urlConverter, getConnectionDetailFn, connectionDetailId);
     }
 
     @Override
-    public List<String> getAllTables(int connectionDetailId) throws SQLException, NotFoundException, ClassNotFoundException {
+    public List<String> getAllTables(int connectionDetailId) throws Exception {
         final Function<Connection, List<String>> fn = (connection) -> {
             List<String> result = new ArrayList<>();
             try {
@@ -61,16 +74,16 @@ public class DatabaseBrowserService implements IDatabaseBrowserService {
             return result;
         };
 
-        return invoke(connectionDetailId, fn);
+        return invoke(fn, driverClassName, urlConverter, getConnectionDetailFn, connectionDetailId);
     }
 
     @Override
-    public List<DBColumn> getAllColumns(int connectionDetailId, String tableName) throws SQLException, NotFoundException, ClassNotFoundException {
+    public List<DBColumn> getAllColumns(int connectionDetailId, String tableName) throws Exception {
         final Function<Connection, List<DBColumn>> fn = (connection) -> {
             List<DBColumn> result = new ArrayList<>();
             try {
                 ResultSet rs = connection.getMetaData()
-                        .getColumns(null, "public", tableName, null);
+                        .getColumns(null, SCHEMA_PATTERN, tableName, null);
                 while (rs.next()) {
                     final DBColumn column = newColumn(rs);
                     result.add(column);
@@ -81,11 +94,10 @@ public class DatabaseBrowserService implements IDatabaseBrowserService {
             return result;
         };
 
-        return invoke(connectionDetailId, fn);
+        return invoke(fn, driverClassName, urlConverter, getConnectionDetailFn, connectionDetailId);
     }
 
-    @Override
-    public DBColumn newColumn(ResultSet rs) throws SQLException {
+    private DBColumn newColumn(ResultSet rs) throws SQLException {
         return new DBColumn(
                 // Get column name
                 rs.getString(4),
@@ -97,13 +109,13 @@ public class DatabaseBrowserService implements IDatabaseBrowserService {
     }
 
     @Override
-    public List<Map<String, Object>> getTableRows(int connectionDetailId, String tableName, int maxRows) throws SQLException, NotFoundException, ClassNotFoundException {
+    public List<Map<String, Object>> getTableRows(int connectionDetailId, String tableName, int maxRows) throws Exception {
         final Function<Connection, List<Map<String, Object>>> fn = (connection) -> {
             final List<Map<String, Object>> rowsResult = new ArrayList<>();
             try {
                 List<DBColumn> columnList = new ArrayList<>();
                 ResultSet metaData = connection.getMetaData()
-                        .getColumns(null, "public", tableName, null);
+                        .getColumns(null, SCHEMA_PATTERN, tableName, null);
                 while (metaData.next()) {
                     final DBColumn column = newColumn(metaData);
                     columnList.add(column);
@@ -114,7 +126,7 @@ public class DatabaseBrowserService implements IDatabaseBrowserService {
                 while (rs.next()) {
                     Map<String, Object> row = new LinkedHashMap<>();
                     for (int i = 1; i <= columnList.size(); i++) {
-                        row.put(columnList.get(i-1).getName(), rs.getObject(i));
+                        row.put(columnList.get(i - 1).getName(), rs.getObject(i));
                     }
                     rowsResult.add(row);
                 }
@@ -124,37 +136,55 @@ public class DatabaseBrowserService implements IDatabaseBrowserService {
             return rowsResult;
         };
 
-        return invoke(connectionDetailId, fn);
+        return invoke(fn, driverClassName, urlConverter, getConnectionDetailFn, connectionDetailId);
     }
 
     /**
      * Connects to a database and invokes defined function on the connection.
      * R stands for a result type.
      */
-    private <R> R invoke(int connectionDetailId, Function<Connection, R> fn) throws NotFoundException, ClassNotFoundException, SQLException {
+    private <R> R invoke(Function<Connection, R> fn, String driverClassName, Function<ConnectionDetail, String> urlConverter, CheckedBiFunction<IConnectionDetailService, Integer, ConnectionDetail> connectionDetailSupplier, int connectionDetailId) throws Exception {
         // fetch connection detail from ID
-        final ConnectionDetail connectionDetail = service.getConnectionDetail(connectionDetailId);
+        final ConnectionDetail connectionDetail = connectionDetailSupplier.apply(service, connectionDetailId);
 
         R result;
-        Class.forName("org.postgresql.Driver");
-
-        StringBuilder urlBuilder = new StringBuilder();
-        urlBuilder.append("jdbc:postgresql://")
-                .append(connectionDetail.getHostname())
-                .append(":")
-                .append(connectionDetail.getPort())
-                .append("/")
-                .append(connectionDetail.getDatabaseName())
-        ;
 
         // Creating connection
-        Connection connection = DriverManager.getConnection(urlBuilder.toString(),
-                "postgres", "");
+        Class.forName(driverClassName);
+        final String username = connectionDetail.getUsername();
+        final String password = connectionDetail.getPassword();
+        Connection connection = DriverManager.getConnection(urlConverter.apply(connectionDetail), username, password);
         DatabaseBrowserService.LOGGER.info(String.format("Connected to the database: %s (%s)", connectionDetail.getName(), connectionDetail.getDescription()));
 
         result = fn.apply(connection);
 
         connection.close();
         return result;
+    }
+
+    /**
+     * Used primarily for tests.
+     */
+    protected void setDriverClassName(String driverClassName) {
+        this.driverClassName = driverClassName;
+    }
+
+    /**
+     * Used primarily for tests.
+     */
+    protected void setUrlConverter(Function<ConnectionDetail, String> urlConverter) {
+        this.urlConverter = urlConverter;
+    }
+
+    /**
+     * Used primarily for tests.
+     */
+    protected void setGetConnectionDetailFn(CheckedBiFunction<IConnectionDetailService, Integer, ConnectionDetail> getConnectionDetailFn) {
+        this.getConnectionDetailFn = getConnectionDetailFn;
+    }
+
+    @FunctionalInterface
+    public interface CheckedBiFunction<S, T, R> {
+        R apply(S s, T t) throws Exception;
     }
 }

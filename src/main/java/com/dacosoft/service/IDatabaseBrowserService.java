@@ -14,14 +14,12 @@ import java.util.function.Function;
 
 public interface IDatabaseBrowserService {
 
-    List<String> getAllSchemas(int connectionDetailId) throws NotFoundException, SQLException, ClassNotFoundException;
+    List<String> getAllSchemas(int connectionDetailId) throws Exception;
 
-    List<String> getAllTables(int connectionDetailId) throws SQLException, NotFoundException, ClassNotFoundException;
+    List<String> getAllTables(int connectionDetailId) throws Exception;
 
-    List<DBColumn> getAllColumns(int connectionDetailId, String tableName) throws SQLException, NotFoundException, ClassNotFoundException;
+    List<DBColumn> getAllColumns(int connectionDetailId, String tableName) throws Exception;
 
-    DBColumn newColumn(ResultSet rs) throws SQLException;
-
-    List<Map<String, Object>> getTableRows(int connectionDetailId, String tableName, int maxRows) throws SQLException, NotFoundException, ClassNotFoundException;
+    List<Map<String, Object>> getTableRows(int connectionDetailId, String tableName, int maxRows) throws Exception;
 
 }

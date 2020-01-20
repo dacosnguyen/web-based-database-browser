@@ -31,7 +31,7 @@ public class DatabaseBrowserController {
             return databaseBrowserService.getAllSchemas(connectionDetailId);
         } catch (NotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage(), e);
-        } catch (SQLException | ClassNotFoundException e) {
+        } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
         }
     }
@@ -42,7 +42,7 @@ public class DatabaseBrowserController {
             return databaseBrowserService.getAllTables(connectionDetailId);
         } catch (NotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage(), e);
-        } catch (SQLException | ClassNotFoundException e) {
+        } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
         }
     }
@@ -53,7 +53,7 @@ public class DatabaseBrowserController {
             return databaseBrowserService.getAllColumns(connectionDetailId, tableName);
         } catch (NotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage(), e);
-        } catch (SQLException | ClassNotFoundException e) {
+        } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
         }
     }
@@ -67,7 +67,7 @@ public class DatabaseBrowserController {
             return databaseBrowserService.getTableRows(connectionDetailId, tableName, limit);
         } catch (NotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage(), e);
-        } catch (SQLException | ClassNotFoundException e) {
+        } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e);
         }
     }

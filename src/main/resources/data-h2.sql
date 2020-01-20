@@ -3,4 +3,4 @@ VALUES ('main', 'E-sport gaming platform database', 'localhost', 'Kobra PostgreS
 
 
 INSERT INTO "connection_detail" ("databasename", "description", "hostname", "name", "password", "port", "username")
-VALUES ('A database name', 'a description', 'a hostname', 'a DUMMY database', 'asdf', 1000, 'a username');
+VALUES ('testdb', 'Embedded H2 databbase description', 'localhost', 'Embedded H2 Database', 'dacos1234', 8000, 'dacos');
