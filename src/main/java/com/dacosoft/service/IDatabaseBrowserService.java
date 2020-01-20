@@ -1,17 +1,15 @@
 package com.dacosoft.service;
 
-import com.dacosoft.entity.ConnectionDetail;
 import com.dacosoft.entity.DBColumn;
-import javassist.NotFoundException;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 
+/**
+ * This service connects to any database (locally or remotely)
+ * where the connection is defined by connection details stored in our embedded database.
+ * This service provides operations like listing schemas, tables etc. on the connected database.
+ */
 public interface IDatabaseBrowserService {
 
     List<String> getAllSchemas(int connectionDetailId) throws Exception;
@@ -20,6 +18,9 @@ public interface IDatabaseBrowserService {
 
     List<DBColumn> getAllColumns(int connectionDetailId, String tableName) throws Exception;
 
+    /**
+     * Returns a list of maps where the key is a column name and the value is a database row field's value on the column.
+     */
     List<Map<String, Object>> getTableRows(int connectionDetailId, String tableName, int maxRows) throws Exception;
 
 }

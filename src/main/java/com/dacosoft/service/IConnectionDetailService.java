@@ -5,6 +5,9 @@ import javassist.NotFoundException;
 
 import java.util.List;
 
+/**
+ * This service offers all operations with {@link ConnectionDetail}.
+ */
 public interface IConnectionDetailService {
 
     List<ConnectionDetail> getConnectionDetails();
