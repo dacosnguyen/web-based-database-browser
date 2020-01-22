@@ -139,16 +139,15 @@ public class DatabaseBrowserService implements IDatabaseBrowserService {
 
         R result;
 
-        // Creating connection
         Class.forName(driverClassName);
         final String username = connectionDetail.getUsername();
         final String password = connectionDetail.getPassword();
-        Connection connection = DriverManager.getConnection(urlConverter.apply(connectionDetail), username, password);
-        DatabaseBrowserService.LOGGER.info(String.format("Connected to the database: %s (%s)", connectionDetail.getName(), connectionDetail.getDescription()));
+        try (Connection connection = DriverManager.getConnection(urlConverter.apply(connectionDetail), username, password)) {
+            DatabaseBrowserService.LOGGER.info(String.format("Connected to the database: %s (%s)", connectionDetail.getName(), connectionDetail.getDescription()));
 
-        result = fn.apply(connection);
+            result = fn.apply(connection);
+        }
 
-        connection.close();
         return result;
     }
 
