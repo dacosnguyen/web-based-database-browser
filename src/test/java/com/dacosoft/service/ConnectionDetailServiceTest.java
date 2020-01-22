@@ -47,7 +47,7 @@ public class ConnectionDetailServiceTest {
     public void testSaveConnectionDetail() throws NotFoundException {
         final ConnectionDetail cd = new ConnectionDetail();
         cd.setName("name");
-        cd.setDatabaseName("main");
+        cd.setDatabasename("main");
         cd.setHostname("localhost");
         cd.setUsername("dacos");
         cd.setPassword("1234");
@@ -76,7 +76,7 @@ public class ConnectionDetailServiceTest {
     public void testDeleteConnectionDetail() {
         final ConnectionDetail cd = new ConnectionDetail();
         cd.setName("name");
-        cd.setDatabaseName("main");
+        cd.setDatabasename("main");
         cd.setHostname("localhost");
         cd.setUsername("dacos");
         cd.setPassword("1234");

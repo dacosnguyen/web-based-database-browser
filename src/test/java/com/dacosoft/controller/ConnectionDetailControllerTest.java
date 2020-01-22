@@ -49,7 +49,7 @@ class ConnectionDetailControllerTest {
         cd1.setPort(1111);
         cd1.setUsername("user1");
         cd1.setHostname("hostname1");
-        cd1.setDatabaseName("databasename1");
+        cd1.setDatabasename("databasename1");
         cd1.setName("name1");
         connectionDetails.add(cd1);
         final ConnectionDetail cd2 = new ConnectionDetail();
@@ -58,7 +58,7 @@ class ConnectionDetailControllerTest {
         cd2.setPort(2222);
         cd2.setUsername("user2");
         cd2.setHostname("hostname2");
-        cd2.setDatabaseName("databasename2");
+        cd2.setDatabasename("databasename2");
         cd2.setName("name2");
         cd2.setDescription("some description 2");
         connectionDetails.add(cd2);
@@ -81,7 +81,7 @@ class ConnectionDetailControllerTest {
         cd.setPort(1111);
         cd.setUsername("user1");
         cd.setHostname("hostname1");
-        cd.setDatabaseName("databasename1");
+        cd.setDatabasename("databasename1");
         cd.setName("name1");
         when(mockedService.getConnectionDetail(1)).thenReturn(cd);
 
@@ -112,7 +112,7 @@ class ConnectionDetailControllerTest {
         cd.setPort(1111);
         cd.setUsername("user1");
         cd.setHostname("hostname1");
-        cd.setDatabaseName("databasename1");
+        cd.setDatabasename("databasename1");
         cd.setName("name1");
         Mockito.doNothing().when(mockedService).saveConnectionDetail(cd);
 
@@ -135,7 +135,7 @@ class ConnectionDetailControllerTest {
         cd.setPort(1111);
         cd.setUsername("user1");
         cd.setHostname("hostname1");
-        cd.setDatabaseName("databasename1");
+        cd.setDatabasename("databasename1");
         cd.setName("name1");
         Mockito.doNothing().when(mockedService).updateConnectionDetail(cd);
 

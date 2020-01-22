@@ -15,6 +15,10 @@ H2 in this project is set upped in the embedded mode with Postgres mode and with
 - Java 11
 
 ### How to start the application
+run `mvn clean initialize generate-sources test`
+- initialize: create and fill embedded H2 database
+- generate-sources: generates JOOQ Java classes.
+- test: compile and run tests
 The spring application starts in `com.dacosoft.App`
 
 ### How to run tests
@@ -26,3 +30,4 @@ The spring application starts in `com.dacosoft.App`
 - cached connections.
 - JSON mapping can handle type org.postgresql.jdbc.PgArray
 - An united exception handler with logging in REST controllers.
+- JOOQ Java classes are created programmatically.

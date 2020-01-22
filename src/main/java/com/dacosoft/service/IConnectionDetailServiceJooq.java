@@ -1,21 +1,22 @@
 package com.dacosoft.service;
 
-import com.dacosoft.entity.ConnectionDetail;
 import javassist.NotFoundException;
+import org.jooq.example.db.h2.tables.pojos.ConnectionDetail;
+import org.jooq.example.db.h2.tables.records.ConnectionDetailRecord;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 /**
- * This service offers all operations with {@link ConnectionDetail}.
+ * This service offers all operations with {@link ConnectionDetail} via JOOQ.
  */
-public interface IConnectionDetailService {
+public interface IConnectionDetailServiceJooq {
 
     @Transactional
-    List<ConnectionDetail> getConnectionDetails();
+    List<ConnectionDetailRecord> getConnectionDetails();
 
     @Transactional
-    ConnectionDetail getConnectionDetail(int id) throws NotFoundException;
+    ConnectionDetailRecord getConnectionDetail(int id) throws NotFoundException;
 
     @Transactional
     void saveConnectionDetail(ConnectionDetail connectionDetail);
@@ -25,5 +26,4 @@ public interface IConnectionDetailService {
 
     @Transactional
     void deleteConnectionDetail(int id);
-
 }

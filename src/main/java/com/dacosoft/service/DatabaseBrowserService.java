@@ -18,7 +18,7 @@ import java.util.function.Function;
 public class DatabaseBrowserService implements IDatabaseBrowserService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseBrowserService.class);
-    private static final String SCHEMA_PATTERN = "public";
+    private static final String SCHEMA_PATTERN = "PUBLIC";
     private String driverClassName = "org.postgresql.Driver";
     private CheckedBiFunction<IConnectionDetailService, Integer, ConnectionDetail> getConnectionDetailFn = IConnectionDetailService::getConnectionDetail;
     private Function<ConnectionDetail, String> urlConverter = connectionDetail1 -> new StringBuilder()
@@ -27,7 +27,7 @@ public class DatabaseBrowserService implements IDatabaseBrowserService {
             .append(":")
             .append(connectionDetail1.getPort())
             .append("/")
-            .append(connectionDetail1.getDatabaseName())
+            .append(connectionDetail1.getDatabasename())
             .toString();
 
     private final IConnectionDetailService service;
@@ -61,9 +61,7 @@ public class DatabaseBrowserService implements IDatabaseBrowserService {
         final Function<Connection, List<String>> fn = (connection) -> {
             List<String> result = new ArrayList<>();
             try {
-                ResultSet rs = connection.getMetaData()
-                        // TODO better filtering
-                        .getTables(null, SCHEMA_PATTERN, "%", null);
+                ResultSet rs = connection.getMetaData().getTables(null, SCHEMA_PATTERN, "%", null);
                 while (rs.next()) {
                     //  Get table name
                     result.add(rs.getString(3));
@@ -113,20 +111,12 @@ public class DatabaseBrowserService implements IDatabaseBrowserService {
         final Function<Connection, List<Map<String, Object>>> fn = (connection) -> {
             final List<Map<String, Object>> rowsResult = new ArrayList<>();
             try {
-                List<DBColumn> columnList = new ArrayList<>();
-                ResultSet metaData = connection.getMetaData()
-                        .getColumns(null, SCHEMA_PATTERN, tableName, null);
-                while (metaData.next()) {
-                    final DBColumn column = newColumn(metaData);
-                    columnList.add(column);
-                }
-
                 final PreparedStatement statement = connection.prepareStatement(String.format("select * from %s limit %d", tableName, maxRows));
                 ResultSet rs = statement.executeQuery();
                 while (rs.next()) {
                     Map<String, Object> row = new LinkedHashMap<>();
-                    for (int i = 1; i <= columnList.size(); i++) {
-                        row.put(columnList.get(i - 1).getName(), rs.getObject(i));
+                    for (int i = 1; i <= rs.getMetaData().getColumnCount(); i++) {
+                        row.put(rs.getMetaData().getColumnName(i), rs.getObject(i));
                     }
                     rowsResult.add(row);
                 }

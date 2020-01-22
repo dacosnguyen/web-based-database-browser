@@ -5,26 +5,26 @@ import java.io.Serializable;
 import java.util.Objects;
 
 @Entity
-@Table(schema = "public", name = "connection_detail")
+@Table(schema = "PUBLIC", name = "CONNECTION_DETAIL")
 public final class ConnectionDetail implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @Column(name = "ID")
     private Integer id;
-    @Column(name = "name")
+    @Column(name = "NAME")
     private String name;            // custom name of the database instance
-    @Column(name = "hostname")
+    @Column(name = "HOSTNAME")
     private String hostname;        // hostname of the database
-    @Column(name = "port")
+    @Column(name = "PORT")
     private int port;            // port where the database runs
-    @Column(name = "databasename")
-    private String databaseName;    // name of the database
-    @Column(name = "username")
+    @Column(name = "DATABASENAME")
+    private String databasename;    // name of the database
+    @Column(name = "USERNAME")
     private String username;        // username for connecting to the database
-    @Column(name = "password")
+    @Column(name = "PASSWORD")
     private String password;        // password for connecting to the database
-    @Column(name = "description")
+    @Column(name = "DESCRIPTION")
     private String description;
 
     public Integer getId() {
@@ -59,12 +59,12 @@ public final class ConnectionDetail implements Serializable {
         this.port = port;
     }
 
-    public String getDatabaseName() {
-        return databaseName;
+    public String getDatabasename() {
+        return databasename;
     }
 
-    public void setDatabaseName(String databaseName) {
-        this.databaseName = databaseName;
+    public void setDatabasename(String databaseName) {
+        this.databasename = databaseName;
     }
 
     public String getUsername() {
@@ -100,7 +100,7 @@ public final class ConnectionDetail implements Serializable {
                 id.equals(that.id) &&
                 name.equals(that.name) &&
                 hostname.equals(that.hostname) &&
-                databaseName.equals(that.databaseName) &&
+                databasename.equals(that.databasename) &&
                 username.equals(that.username) &&
                 password.equals(that.password) &&
                 Objects.equals(description, that.description);
@@ -108,6 +108,6 @@ public final class ConnectionDetail implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, hostname, port, databaseName, username, password, description);
+        return Objects.hash(id, name, hostname, port, databasename, username, password, description);
     }
 }
